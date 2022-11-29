@@ -95,7 +95,39 @@ public class AndroidModule extends VirtualModule<VM> {
                 return read(emulator, vm);
             }
         }));
+
+        symbols.put("AAsset_seek", svcMemory.registerSvc(is64Bit ? new Arm64Svc() {
+            @Override
+            public long handle(Emulator<?> emulator) {
+                return seek(emulator, vm);
+            }
+        } : new ArmSvc() {
+            @Override
+            public long handle(Emulator<?> emulator) {
+                return seek(emulator, vm);
+            }
+        }));
     }
+
+    private static int seek(Emulator<?> emulator, VM vm) {
+        RegisterContext context = emulator.getContext();
+        UnidbgPointer pointer = context.getPointerArg(0);
+        int offset = context.getIntArg(1);
+        int whence = context.getIntArg(2);
+        if (log.isDebugEnabled()) {
+            log.debug("AAset_seek pointer=" + pointer + ", offset=" + offset + ", whence=" + whence + ", LR=" + context.getLRPointer());
+        }
+        final int SEEK_SET = 0;
+        final int SEEK_CUR = 1;
+        final int SEEK_END = 2;
+        if ((whence == SEEK_SET && offset >= 0) || whence == SEEK_CUR || whence == SEEK_END) {
+            Asset asset = vm.getObject(pointer.toIntPeer());
+            return asset.seek(offset, whence);
+        }
+        throw new BackendException("offset=" + offset + ", whence=" + whence + ", LR=" + context.getLRPointer());
+    }
+
+
 
     private static long fromJava(Emulator<?> emulator, VM vm) {
         RegisterContext context = emulator.getContext();

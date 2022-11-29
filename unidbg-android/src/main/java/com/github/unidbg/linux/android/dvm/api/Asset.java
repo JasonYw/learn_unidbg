@@ -42,4 +42,26 @@ public class Asset extends DvmObject<String> {
         return data.getByteArray(index, read);
     }
 
+    public int seek(int offset, int whence) {
+        Pointer pointer = memoryBlock.getPointer();
+        int index = pointer.getInt(0);
+        int length = pointer.getInt(4);
+
+        final int SEEK_SET = 0;
+        final int SEEK_CUR = 1;
+        final int SEEK_END = 2;
+
+        if (whence == SEEK_SET) {
+            index = offset;
+        }
+        else if (whence == SEEK_CUR) {
+            index = index + offset;
+        }
+        else if (whence == SEEK_END) {
+            index = length + offset;
+        }
+        pointer.setInt(0, index);
+        return index;
+    }
+
 }
