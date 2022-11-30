@@ -13,10 +13,6 @@ import com.github.unidbg.linux.android.dvm.array.ByteArray;
 import com.github.unidbg.memory.Memory;
 import com.github.unidbg.virtualmodule.android.AndroidModule;
 import com.github.unidbg.virtualmodule.android.JniGraphics;
-import com.zhangyue.iReader.JNI.util.JNISecurity;
-import jdk.nashorn.internal.runtime.regexp.joni.exception.SyntaxException;
-
-import javax.crypto.KeyGenerator;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 
@@ -82,8 +78,4 @@ public class Security extends AbstractJni {
         Security test = new Security();
         test.callSign(args[1]);
     }
-
-
-
-
 }
